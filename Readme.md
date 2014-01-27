@@ -51,5 +51,5 @@ Usage: ./action_instance.rb [options]
     -p, --profile profile            AWS CLI Profile. Default: "default"
     -r, --region region              Region. Default: "us-east-1"
     -i, --instaceid instaceid        Specific instance id
-     -h, --help                       Help
+    -h, --help                       Help
 ```

@@ -24,7 +24,9 @@ end
 # Print each server from all regions
 def printRegion(profile,region)
   json = `aws --profile #{profile} --region #{region} ec2 describe-instances`
-  parsed = JSON.parse(json)
+  if json
+    parsed = JSON.parse(json)
+  end
 
   # Gotta check if any servers at all
   if json.length > 40

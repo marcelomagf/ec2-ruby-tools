@@ -10,8 +10,10 @@ require 'optparse'
 
 # Do something with instance
 def actionInstance(profile,region,action,instance)
-  json = `/usr/local/bin/aws --profile #{profile} --region #{region} ec2 #{action}-instances --instance-ids #{instance}`
-  parsed = JSON.parse(json)
+  json = `aws --profile #{profile} --region #{region} ec2 #{action}-instances --instance-ids #{instance}`
+  if json
+    parsed = JSON.parse(json)
+  end
 
   case action
   when "start"
@@ -39,7 +41,7 @@ options = {
   :action => nil,
   :profile => "default",
   :region => "us-east-1",
-  :instaceid => nil,
+  :instanceid => nil,
   :daystokeep => 2,
 }
 
@@ -54,8 +56,8 @@ parser = OptionParser.new do|opts|
   opts.on('-r', '--region region', 'Region. Default: "us-east-1"') do |region|
     options[:region] = region;
   end
-  opts.on('-i', '--instaceid instaceid', 'Specific instance id') do |instaceid|
-    options[:instaceid] = instaceid;
+  opts.on('-i', '--instanceid instanceid', 'Specific instance id') do |instanceid|
+    options[:instanceid] = instanceid;
   end
   opts.on('-h', '--help', 'Help') do
     puts opts

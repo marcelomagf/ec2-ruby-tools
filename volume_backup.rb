@@ -2,6 +2,7 @@
 
 # Version 1.0
 # License Type: GNU GENERAL PUBLIC LICENSE, Version 3
+# Author: Marcelo Almeda <marcelomagf@gmail.com>
 
 require 'rubygems'
 require 'json'

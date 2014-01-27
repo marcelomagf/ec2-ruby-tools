@@ -51,10 +51,8 @@ def printRegion(profile,region)
         print instance["PublicIpAddress"]
         print "\n"
       end
-
-      puts  "-------------"
-
     end
+    puts  "-------------"
   end
 end
 

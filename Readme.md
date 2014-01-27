@@ -17,15 +17,14 @@ List all instances from all regions or for a specified region
 
 ```
   Usage: ./list_instances.rb [options]
-    -p, --profile profile            AWS CLI Profile. Default:
-     "default"
+    -p, --profile profile            AWS CLI Profile. Default: "default"
     -r, --region region              Region. Default: All regions
-    -h, --help                       Help""
+    -h, --help                       Help
 ```
 
 ## volume_backup.rb
 
-Create backup snapshots of a single volume or all volumes from a region
+Create backup snapshots of a single volume or all volumes from a region.
 
 ```
 Usage: ./volume_backup.rb [options]
@@ -33,8 +32,15 @@ Usage: ./volume_backup.rb [options]
     -p, --profile profile            AWS CLI Profile. Default: "default"
     -r, --region region              Region. Default: "us-east-1"
     -i, --volumeid volumeid          Specific volume id to backup
-    -d, --days days                  Days to keep the                        snapshot. Default: "2"
+    -d, --days days                  Days to keep the snapshot. Default: "2"
     -h, --help                       Help
+```
+
+Crontab schedule for a 2 days backup snapshots:
+
+````
+50 23 * * * /path/volume_backup.rb -a backup -p myprofile -r us-west-1 -d 2
+55 23 * * * /path/volume_backup.rb -a purge -p myprofile -r us-west-1
 ```
 
 ## action_instance.rb
@@ -45,5 +51,5 @@ Usage: ./action_instance.rb [options]
     -p, --profile profile            AWS CLI Profile. Default: "default"
     -r, --region region              Region. Default: "us-east-1"
     -i, --instaceid instaceid        Specific instance id
-     -h, --help                       Help""""""""
+     -h, --help                       Help
 ```

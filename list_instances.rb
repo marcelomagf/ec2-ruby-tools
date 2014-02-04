@@ -48,6 +48,8 @@ def printRegion(profile,region)
         print "\t"
         print instance["InstanceType"]
         print "\t"
+        print instance["Placement"]["AvailabilityZone"]
+        print "\t"
         print instance["PrivateIpAddress"]
         print "\t"
         print instance["PublicIpAddress"]

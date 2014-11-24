@@ -24,8 +24,11 @@ end
 # Print each server from all regions
 def printRegion(profile,region)
   json = `aws --profile #{profile} --region #{region} ec2 describe-instances`
-  if json
+  if json.length > 20
     parsed = JSON.parse(json)
+  else
+    puts "No profile #{profile}. Please run with \"-h\"" 
+    exit
   end
 
   # Gotta check if any servers at all
@@ -69,11 +72,11 @@ regions=[
   "us-west-2",
   "sa-east-1",
   "eu-west-1",
+  "eu-central-1",
   "ap-northeast-1",
   "ap-southeast-1",
   "ap-southeast-2"
 ]
-
 
 options = {
   :profile => "default",

@@ -11,8 +11,11 @@ require 'optparse'
 # Do something with instance
 def actionInstance(profile,region,action,instance)
   json = `aws --profile #{profile} --region #{region} ec2 #{action}-instances --instance-ids #{instance}`
-  if json
+  if json.length > 20
     parsed = JSON.parse(json)
+  else
+    puts "No profile #{profile}. Please run with \"-h\""
+    exit
   end
 
   case action

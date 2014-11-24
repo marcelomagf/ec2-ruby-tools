@@ -22,6 +22,16 @@ List all instances from all regions or for a specified region
     -h, --help                       Help
 ```
 
+## list_zones.rb
+
+List all record sets from all hosted zones
+
+```
+  Usage: ./list_zones.rb [options]
+    -p, --profile profile            AWS CLI Profile. Default: "default"
+    -h, --help                       Help
+```
+
 ## volume_backup.rb
 
 Create backup snapshots of a single volume or all volumes from a region.

@@ -29,17 +29,19 @@ def printRegion(profile,region)
   end
 
   # Gotta check if any servers at all
-  if json.length > 40
+  if json.length > 20
     puts  "-------------"
     puts "Region: #{region}"
     puts  "-------------"
 
     parsed["Reservations"].each do |reservation|
       reservation["Instances"].each  do |instance|
-        instance["Tags"].each do |tag|
-          if tag["Key"] == "Name"
-            print tag["Value"]
-            printSpaces(tag["Value"],22)
+        if instance["Tags"]
+          instance["Tags"].each do |tag|
+            if tag["Key"] == "Name"
+              print tag["Value"]
+              printSpaces(tag["Value"],22)
+            end
           end
         end
         print instance["InstanceId"]

@@ -8,7 +8,6 @@ require 'rubygems'
 require 'json'
 require 'date'
 require 'optparse'
-require 'date'
 
 # Scan all volumes and backup each one
 def backupAllVolumes(profile,region,daystokeep)

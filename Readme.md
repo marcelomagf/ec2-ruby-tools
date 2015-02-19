@@ -22,16 +22,6 @@ List all instances from all regions or for a specified region
     -h, --help                       Help
 ```
 
-## list_zones.rb
-
-List all record sets from all hosted zones
-
-```
-  Usage: ./list_zones.rb [options]
-    -p, --profile profile            AWS CLI Profile. Default: "default"
-    -h, --help                       Help
-```
-
 ## list_volumes.rb
 
 List all volumes from all regions or for a specified region

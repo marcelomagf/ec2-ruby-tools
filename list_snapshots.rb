@@ -52,9 +52,11 @@ def printRegion(profile,region)
       print snap["Description"]
       print "\n"
     end
-    puts "-------------"
-    puts "Total size: #{totalsize} GB"
-    puts "-------------"
+    if totalsize > 0
+      puts "-------------"
+      puts "Total size: #{totalsize} GB"
+      puts "-------------"
+    end
   end
 end
 

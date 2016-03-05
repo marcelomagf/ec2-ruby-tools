@@ -75,7 +75,20 @@ Crontab schedule for a 2 days backup snapshots:
 55 23 * * * /path/volume_backup.rb -a purge -p myprofile -r us-west-1
 ```
 
+## del_image.rb
+
+Deregister image and delete all of its snaphosts
+
+```
+Usage: ./action_instance.rb [options]
+    -p, --profile profile            AWS CLI Profile. Default: "default"
+    -m, --imageid imageid            Specific image id
+    -h, --help                       Help
+```
+
 ## action_instance.rb
+
+Starts, stops a instace
 
 ```
 Usage: ./action_instance.rb [options]

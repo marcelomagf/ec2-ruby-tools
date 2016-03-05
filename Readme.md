@@ -44,6 +44,17 @@ List all images from all regions or for a specified region
     -h, --help                       Help
 ```
 
+## list_snapshots.rb
+
+List all snapshots from all regions or for a specified region
+
+```
+  Usage: ./list_snapshots.rb [options]
+    -p, --profile profile            AWS CLI Profile. Default: "default"
+    -r, --region region              Region. Default: All regions
+    -h, --help                       Help
+```
+
 ## list_zones.rb
 
 List all record sets from all hosted zones

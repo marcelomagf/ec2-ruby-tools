@@ -23,7 +23,7 @@ end
 
 # Print each server from all regions
 def printRegion(profile,region)
-  json = `aws --profile #{profile} --region #{region} ec2 describe-instances`
+  json = `/usr/local/bin/aws --profile #{profile} --region #{region} ec2 describe-instances`
   if json.length > 20
     parsed = JSON.parse(json)
   else
@@ -43,7 +43,7 @@ def printRegion(profile,region)
           instance["Tags"].each do |tag|
             if tag["Key"] == "Name"
               print tag["Value"]
-              printSpaces(tag["Value"],22)
+              printSpaces(tag["Value"],25)
             end
           end
         end
@@ -52,6 +52,12 @@ def printRegion(profile,region)
         print instance["State"]["Name"]
         print "\t"
         print instance["InstanceType"]
+        print "\t"
+        if instance["Platform"]
+          print instance["Platform"]
+        else
+          print "linux"
+        end
         print "\t"
         print instance["Placement"]["AvailabilityZone"]
         print "\t"
@@ -68,14 +74,15 @@ end
 # All AWS Regions
 regions=[
   "us-east-1",
-  "us-west-1",
   "us-west-2",
+  "us-west-1",
   "sa-east-1",
   "eu-west-1",
   "eu-central-1",
-  "ap-northeast-1",
   "ap-southeast-1",
-  "ap-southeast-2"
+  "ap-northeast-1",
+  "ap-southeast-2",
+  "ap-northeast-2"
 ]
 
 options = {

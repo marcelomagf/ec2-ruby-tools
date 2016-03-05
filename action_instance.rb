@@ -45,7 +45,6 @@ options = {
   :profile => "default",
   :region => "us-east-1",
   :instanceid => nil,
-  :daystokeep => 2,
 }
 
 parser = OptionParser.new do|opts|

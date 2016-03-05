@@ -23,7 +23,7 @@ end
 
 # Print each server from all regions
 def printRegion(profile,region)
-  json = `aws --profile #{profile} --region #{region} ec2 describe-volumes`
+  json = `aws --profile #{profile} --region #{region} ec2 describe-images --owners self`
   if json.length > 20
     parsed = JSON.parse(json)
   else
@@ -37,28 +37,26 @@ def printRegion(profile,region)
     puts "Region: #{region}"
     puts  "-------------"
 
-    parsed["Volumes"].each do |volume|
-      print volume["VolumeId"]
+    parsed["Images"].each do |image|
+      print image["ImageId"]
       print "\t"
-      print volume["Size"]
-      print "GB\t"
-      print volume["State"]
+      print image["CreationDate"].split("T")[0]
       print "\t"
-      if volume["Attachments"]
-        volume["Attachments"].each do |att|
-          if att["InstanceId"] =~ /i-/
-            print att["InstanceId"]
-            print "\t"
-            print att["Device"]
-          end
-        end
+      if image["Platform"]
+        print image["Platform"]
+      else
+        print "linux"
       end
       print "\t"
-      if volume["Tags"]
-        volume["Tags"].each do |tag|
-          if tag["Key"] == "Name"
-            print tag["Value"]
-            printSpaces(tag["Value"],22)
+      print image["Name"]
+      printSpaces(image["Name"],30)
+      if image["BlockDeviceMappings"]
+        image["BlockDeviceMappings"].each do |devblock|
+          if devblock["Ebs"]
+            print devblock["Ebs"]["VolumeSize"]
+            print "GB: "
+            print devblock["Ebs"]["SnapshotId"]
+            print " "
           end
         end
       end

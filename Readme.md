@@ -18,7 +18,7 @@ List all instances from all regions or for a specified region
 ```
   Usage: ./list_instances.rb [options]
     -p, --profile profile            AWS CLI Profile. Default: "default"
-    -r, --region region              Region. Default: All regions
+    -r, --region region              Region. "all" will list all regions. Default region if not specified
     -h, --help                       Help
 ```
 
@@ -29,7 +29,7 @@ List all volumes from all regions or for a specified region
 ```
   Usage: ./list_volumes.rb [options]
     -p, --profile profile            AWS CLI Profile. Default: "default"
-    -r, --region region              Region. Default: All regions
+    -r, --region region              Region. "all" will list all regions. Default region if not specified
     -h, --help                       Help
 ```
 
@@ -40,7 +40,7 @@ List all images from all regions or for a specified region
 ```
   Usage: ./list_images.rb [options]
     -p, --profile profile            AWS CLI Profile. Default: "default"
-    -r, --region region              Region. Default: All regions
+    -r, --region region              Region. "all" will list all regions. Default region if not specified
     -h, --help                       Help
 ```
 
@@ -51,7 +51,7 @@ List all snapshots from all regions or for a specified region
 ```
   Usage: ./list_snapshots.rb [options]
     -p, --profile profile            AWS CLI Profile. Default: "default"
-    -r, --region region              Region. Default: All regions
+    -r, --region region              Region. "all" will list all regions. Default region if not specified
     -h, --help                       Help
 ```
 
@@ -73,7 +73,7 @@ Create backup snapshots of a single volume or all volumes from a region.
 Usage: ./volume_backup.rb [options]
     -a, --action action              Mandatory: "backup" or "purge"
     -p, --profile profile            AWS CLI Profile. Default: "default"
-    -r, --region region              Region. Default: "us-east-1"
+    -r, --region region              Region. Default region if not specified
     -i, --volumeid volumeid          Specific volume id to backup
     -d, --days days                  Days to keep the snapshot. Default: "2"
     -h, --help                       Help
@@ -105,7 +105,7 @@ Starts, stops a instace
 Usage: ./action_instance.rb [options]
     -a, --action action              Mandatory: "start" or "stop"
     -p, --profile profile            AWS CLI Profile. Default: "default"
-    -r, --region region              Region. Default: "us-east-1"
+    -r, --region region              Region. Default region if not specified
     -i, --instaceid instaceid        Specific instance id
     -h, --help                       Help
 ```

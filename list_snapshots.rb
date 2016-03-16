@@ -23,7 +23,11 @@ end
 
 # Print each server from all regions
 def printRegion(profile,region)
-  json = `aws --profile #{profile} --region #{region} ec2 describe-snapshots --owner-ids self`
+  if region == "default"
+    json = `aws --profile #{profile} ec2 describe-snapshots --owner-ids self`
+  else
+    json = `aws --profile #{profile} --region #{region} ec2 describe-snapshots --owner-ids self`
+  end
   if json.length > 20
     parsed = JSON.parse(json)
   else
@@ -95,12 +99,16 @@ end
 
 parser.parse!
 
-# If no regions specified list all volumes from all regions
+# If no regions specified go for default 
 if options[:region].nil?
+  printRegion(options[:profile],"default")
+
+  # List all regions
+elsif options[:region] == "all"
   regions.each do |region|
     printRegion(options[:profile],region)
   end
 else
-  # If any region specified, list volumes for that region only
+  # If any region specified, list instances for that region only
   printRegion(options[:profile],options[:region])
 end

@@ -23,7 +23,11 @@ end
 
 # Print each server from all regions
 def printRegion(profile,region)
-  json = `aws --profile #{profile} --region #{region} ec2 describe-instances`
+  if region == "default"
+    json = `aws --profile #{profile} ec2 describe-instances`
+  else
+    json = `aws --profile #{profile} --region #{region} ec2 describe-instances`
+  end
   if json.length > 20
     parsed = JSON.parse(json)
   else
@@ -95,7 +99,7 @@ parser = OptionParser.new do|opts|
   opts.on('-p', '--profile profile', 'AWS CLI Profile. Default: "default"') do |profile|
     options[:profile] = profile;
   end
-  opts.on('-r', '--region region', 'Region. Default: All regions') do |region|
+  opts.on('-r', '--region region', 'Region. "all" will list all regions. Default region if not specified') do |region|
     options[:region] = region;
   end
   opts.on('-h', '--help', 'Help') do
@@ -106,8 +110,12 @@ end
 
 parser.parse!
 
-# If no regions specified list all instances from all regions
+# If no regions specified go for default 
 if options[:region].nil?
+  printRegion(options[:profile],"default")
+
+  # List all regions
+elsif options[:region] == "all"
   regions.each do |region|
     printRegion(options[:profile],region)
   end

@@ -59,7 +59,7 @@ parser = OptionParser.new do|opts|
   opts.on('-p', '--profile profile', 'AWS CLI Profile. Default: "default"') do |profile|
     options[:profile] = profile;
   end
-  opts.on('-r', '--region region', 'Region. Default: "us-east-1"') do |region|
+  opts.on('-r', '--region region', 'Region. Default region if not specified') do |region|
     options[:region] = region;
   end
   opts.on('-i', '--volumeid volumeid', 'Specific volume id to backup') do |volumeid|

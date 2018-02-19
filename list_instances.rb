@@ -47,7 +47,7 @@ def printRegion(profile,region)
           instance["Tags"].each do |tag|
             if tag["Key"] == "Name"
               print tag["Value"]
-              printSpaces(tag["Value"],25)
+              printSpaces(tag["Value"],30)
             end
           end
         end

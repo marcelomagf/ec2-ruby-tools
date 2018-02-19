@@ -10,19 +10,55 @@ require 'date'
 require 'optparse'
 
 # Scan all volumes and backup each one
-def backupAllVolumes(profile,region,daystokeep)
-  json =  `aws --profile #{profile} --region #{region} ec2 describe-volumes`
+def backupAllVolumes(profile,region,daystokeep,name,json,tags)
   parsed = JSON.parse(json)
   parsed["Volumes"].each do |volume|
-    backupVolume(profile,region,volume["VolumeId"],daystokeep)
+    backupVolume(profile,region,volume["VolumeId"],daystokeep,name,tags)
   end
 end
 
+def listVolumes(profile,region)
+  json =  `aws --profile #{profile} --region #{region} ec2 describe-volumes`
+  tags = Hash.new
+  parsed = JSON.parse(json)
+  parsed["Volumes"].each do |volume|
+    if volume["Tags"]
+      volume["Tags"].each do |tag|
+        key = tag["Key"]
+        value = tag["Value"]
+        tags["#{volume["VolumeId"]},#{key}"] = "#{value}" 
+      end
+    end
+  end
+  return json,tags
+end
+
 # Create a Snapshot
-def backupVolume(profile,region,volumeid,daystokeep)
+def backupVolume(profile,region,volumeid,daystokeep,name,tags)
+  description = ""
   date = Date.today.next_day(daystokeep)
+  if name.nil? || name.empty?
+    description = "#{volumeid}-deleteafter#{date}"
+  else
+    description = "#{name}-#{volumeid}-deleteafter#{date}"
+  end
   print "Backing up #{volumeid} for #{profile} on #{region}\n"
-  `aws --profile #{profile} --region #{region} ec2 create-snapshot --volume-id #{volumeid} --description "#{volumeid}-deleteafter#{date}"`
+  json = `aws --profile #{profile} --region #{region} ec2 create-snapshot --volume-id #{volumeid} --description "#{description}"`
+  #json = `cat vb.txt`
+  parsed = JSON.parse(json)
+  snapid = parsed["SnapshotId"]
+  tagSnapshot(profile,region,snapid,volumeid,tags)
+end
+
+# Tag snapshot with tags from volume
+def tagSnapshot(profile,region,snapid,volid,tags)
+  tags.each do |k,value|
+    kvolid,key = k.split (",")
+    if volid == kvolid
+      puts "Tagging  #{snapid} from #{volid} with #{key} => #{value}"
+      json =  `aws --profile #{profile} --region #{region} ec2 create-tags --resources #{snapid} --tags Key=#{key},Value=#{value}`
+    end
+  end
 end
 
 # Delete all expired snapshots
@@ -49,6 +85,7 @@ options = {
   :region => "us-east-1",
   :volumeid => nil,
   :daystokeep => 2,
+  :name => nil,
 }
 
 parser = OptionParser.new do|opts|
@@ -65,8 +102,11 @@ parser = OptionParser.new do|opts|
   opts.on('-i', '--volumeid volumeid', 'Specific volume id to backup') do |volumeid|
     options[:volumeid] = volumeid;
   end
-  opts.on('-d', '--days days', 'Days to keep the snapshot. Default: "2"') do |region|
-    options[:daystokeep] = region;
+  opts.on('-d', '--days days', 'Days to keep the snapshot. Default: "2"') do |daystokeep|
+    options[:daystokeep] = daystokeep;
+  end
+  opts.on('-n', '--name name', 'Optional name to id snapshot. Default: none') do |name|
+    options[:name] = name;
   end
   opts.on('-h', '--help', 'Help') do
     puts opts
@@ -85,10 +125,12 @@ case options[:action]
 when "backup"
   unless options[:volumeid].nil?
     # Just that volume to backup
-    backupVolume(options[:profile],options[:region],options[:volumeid],options[:daystokeep].to_i)
+    json,tags = listVolumes(options[:profile],options[:region])
+    backupVolume(options[:profile],options[:region],options[:volumeid],options[:daystokeep].to_i,options[:name],tags)
   else
     # All volumes backup
-    backupAllVolumes(options[:profile],options[:region],options[:daystokeep].to_i)
+    json,tags = listVolumes(options[:profile],options[:region])
+    backupAllVolumes(options[:profile],options[:region],options[:daystokeep].to_i,options[:name],json,tags)
   end
 when "purge"
   # Clean 'old' snapshots

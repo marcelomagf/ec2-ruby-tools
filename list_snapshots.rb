@@ -41,7 +41,8 @@ def printRegion(profile,region)
     puts "Region: #{region}"
     puts  "-------------"
 
-    totalsize=0
+    total=0
+
     parsed["Snapshots"].each do |snap|
       print snap["SnapshotId"]
       print "\t"
@@ -49,18 +50,21 @@ def printRegion(profile,region)
       print "\t"
       print snap["StartTime"].split("T")[0]
       print "\t"
-      totalsize=totalsize+snap["VolumeSize"].to_i
+      total=total+snap["VolumeSize"].to_i
       print snap["VolumeSize"]
       print "GB"
       print "\t"
       print snap["Description"]
       print "\n"
     end
-    if totalsize > 0
-      puts "-------------"
-      puts "Total size: #{totalsize} GB"
-      puts "-------------"
+    puts  "-------------"
+    if total > 1024
+      total = total / 1024
+      puts "Total: #{total}TB"
+    else
+      puts "Total: #{total}GB"
     end
+    puts  "-------------"
   end
 end
 

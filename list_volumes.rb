@@ -41,10 +41,13 @@ def printRegion(profile,region)
     puts "Region: #{region}"
     puts  "-------------"
 
+    total = 0
+
     parsed["Volumes"].each do |volume|
       print volume["VolumeId"]
       print "\t"
       print volume["Size"]
+      total = total + volume["Size"]
       print "GB\t"
       print volume["State"]
       print "\t"
@@ -67,6 +70,13 @@ def printRegion(profile,region)
         end
       end
       print "\n"
+    end
+    puts  "-------------"
+    if total > 1024
+      total = total / 1024
+      puts "Total: #{total}TB"
+    else
+      puts "Total: #{total}GB"
     end
     puts  "-------------"
   end

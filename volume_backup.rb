@@ -17,6 +17,20 @@ def backupAllVolumes(profile,region,daystokeep,name,json,tags)
   end
 end
 
+def listInstanceVolumes(profile,region,instance)
+  json =  `aws --profile #{profile} --region #{region} ec2 describe-instances --instance-id #{instance}`
+  volumes = Array.new
+  parsed = JSON.parse(json)
+  parsed["Reservations"].each do |reservation|
+    reservation["Instances"].each  do |instance|
+      instance["BlockDeviceMappings"].each do |block|
+        volumes << block["Ebs"]["VolumeId"]
+      end
+    end
+  end
+  return volumes
+end
+
 def listVolumes(profile,region)
   json =  `aws --profile #{profile} --region #{region} ec2 describe-volumes`
   tags = Hash.new
@@ -99,8 +113,11 @@ parser = OptionParser.new do|opts|
   opts.on('-r', '--region region', 'Region. Default region if not specified') do |region|
     options[:region] = region;
   end
-  opts.on('-i', '--volumeid volumeid', 'Specific volume id to backup') do |volumeid|
+  opts.on('-v', '--volumeid volumeid', 'Specific volume id to backup') do |volumeid|
     options[:volumeid] = volumeid;
+  end
+  opts.on('-i', '--instanceid instanceid', 'Backup all volumes attached to an instance') do |instanceid|
+    options[:instanceid] = instanceid;
   end
   opts.on('-d', '--days days', 'Days to keep the snapshot. Default: "2"') do |daystokeep|
     options[:daystokeep] = daystokeep;
@@ -123,14 +140,21 @@ end
 
 case options[:action]
 when "backup"
+  json,tags = listVolumes(options[:profile],options[:region])
   unless options[:volumeid].nil?
     # Just that volume to backup
-    json,tags = listVolumes(options[:profile],options[:region])
     backupVolume(options[:profile],options[:region],options[:volumeid],options[:daystokeep].to_i,options[:name],tags)
   else
-    # All volumes backup
-    json,tags = listVolumes(options[:profile],options[:region])
-    backupAllVolumes(options[:profile],options[:region],options[:daystokeep].to_i,options[:name],json,tags)
+    unless options[:instanceid].nil?
+      # Just that instance to backup
+      volumes = listInstanceVolumes(options[:profile],options[:region],options[:instanceid])
+      volumes.each do |volume|
+        backupVolume(options[:profile],options[:region],volume,options[:daystokeep].to_i,options[:name],tags)
+      end
+    else
+      # All volumes backup
+      backupAllVolumes(options[:profile],options[:region],options[:daystokeep].to_i,options[:name],json,tags)
+    end
   end
 when "purge"
   # Clean 'old' snapshots

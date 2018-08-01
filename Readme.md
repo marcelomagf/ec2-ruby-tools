@@ -74,7 +74,8 @@ Usage: ./volume_backup.rb [options]
     -a, --action action              Mandatory: "backup" or "purge"
     -p, --profile profile            AWS CLI Profile. Default: "default"
     -r, --region region              Region. Default region if not specified
-    -i, --volumeid volumeid          Specific volume id to backup
+    -v, --volumeid volumeid          Specific volume id to backup
+    -i, --instanceid instanceid      Specific instance id to backup (all volumes attached will be backed up)
     -d, --days days                  Days to keep the snapshot. Default: "2"
     -h, --help                       Help
 ```

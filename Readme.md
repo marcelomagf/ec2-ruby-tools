@@ -65,6 +65,22 @@ List all record sets from all hosted zones
     -h, --help                       Help
 ```
 
+## list_no_tag.rb
+
+List all resources not tagged with specific tag
+
+```
+  Usage: ./list_no_tag.rb [options]
+     -i, --instance                   List Instances
+     -r, --rds                        List RDS
+     -e, --emr                        List EMR
+     -d, --redshift                   List Redshift
+     -s, --s3                         List S3 Buckets
+     -t, --tag tag                    What tag to look for
+     -p, --profile profile            AWS CLI Profile. Default: "default"
+     -h, --help                       Help
+```
+
 ## volume_backup.rb
 
 Create backup snapshots of a single volume or all volumes from a region.

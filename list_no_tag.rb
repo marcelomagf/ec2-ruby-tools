@@ -75,6 +75,37 @@ def printRDS(profile,region,lftag)
   end
 end
 
+# Print lambdas
+def printLambda(profile,region,lftag)
+  json = `aws --profile #{profile} --region #{region} lambda list-functions`
+  if json.length > 20
+    parsed = JSON.parse(json)
+  end
+  if json.length > 20
+    parsed["Functions"].each do |lambda|
+      lambdaname= lambda["FunctionName"]
+      lambdaarn= lambda["FunctionArn"]
+      jsonb = `aws --profile #{profile} --region #{region} lambda list-tags --resource #{lambdaarn} 2> /dev/null`
+      if jsonb.length > 20
+        parsedb = JSON.parse(jsonb)
+      else
+        puts "Lambda sem tag: #{lambdaname}"
+      end
+      if jsonb.length > 20
+        ok = false
+        parsedb["Tags"].each do |tag|
+          if tag == lftag
+            ok = true
+          end
+        end
+        if !ok
+          puts "lambda sem tag: #{lambdaname}"
+        end
+      end
+    end
+  end
+end
+
 # Print buckets
 def printBuckets(profile,region,lftag)
   json = `aws --profile #{profile} --region #{region} s3api list-buckets`
@@ -104,6 +135,7 @@ def printBuckets(profile,region,lftag)
     end
   end
 end
+
 
 # Print Redshift
 def printRedshift(profile,region,lftag)
@@ -208,6 +240,9 @@ parser = OptionParser.new do|opts|
   opts.on('-s', '--s3', 'List S3 Buckets') do |s3|
     options[:s3] = true;
   end
+  opts.on('-l', '--lambda', 'List Lambda Functions') do |lambda|
+    options[:lambda] = true;
+  end
   opts.on('-t', '--tag tag', 'What tag to look for') do |tag|
     options[:tag] = tag;
   end
@@ -253,4 +288,9 @@ end
 if options[:s3]
   printLabel("Buckets")
   printBuckets(options[:profile],"us-east-1",options[:tag])
+end
+
+if options[:lambda]
+  printLabel("Lambda Function")
+  printLambda(options[:profile],"us-east-1",options[:tag])
 end

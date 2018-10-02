@@ -8,6 +8,10 @@ require 'rubygems'
 require 'json'
 require 'optparse'
 
+regionsfile = __dir__ + "/aws.regions.txt"
+regions = File.readlines(regionsfile)
+
+
 # Do something with instance
 def actionInstance(profile,region,action,instance)
   json = `aws --profile #{profile} --region #{region} ec2 #{action}-instances --instance-ids #{instance}`

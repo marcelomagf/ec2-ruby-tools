@@ -8,6 +8,10 @@ require 'rubygems'
 require 'json'
 require 'optparse'
 
+# AWS Regions
+regionsfile = __dir__ + "/aws.regions.txt"
+regions = File.readlines(regionsfile)
+
 # Print spaces to tabulate nicely
 def printSpaces(name,space)
   if name

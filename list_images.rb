@@ -8,6 +8,10 @@ require 'rubygems'
 require 'json'
 require 'optparse'
 
+# AWS Regions
+regionsfile = __dir__ + "/aws.regions.txt"
+regions = File.readlines(regionsfile)
+
 # Print spaces to tabulate nicely
 def printSpaces(name,space)
   if name
@@ -69,20 +73,6 @@ def printRegion(profile,region)
     puts  "-------------"
   end
 end
-
-# All AWS Regions
-regions=[
-  "us-east-1",
-  "us-west-2",
-  "us-west-1",
-  "sa-east-1",
-  "eu-west-1",
-  "eu-central-1",
-  "ap-southeast-1",
-  "ap-northeast-1",
-  "ap-southeast-2",
-  "ap-northeast-2"
-]
 
 options = {
   :profile => "default",

@@ -8,6 +8,10 @@ require 'rubygems'
 require 'json'
 require 'optparse'
 
+# AWS Regions
+regionsfile = __dir__ + "/aws.regions.txt"
+regions = File.readlines(regionsfile)
+
 # Print spaces to tabulate nicely
 def printSpaces(name,space)
   if name
@@ -22,7 +26,7 @@ def printSpaces(name,space)
 end
 
 # Print each server from all regions
-def printRegion(profile,region)
+def printRegion(profile,region,keyname)
   if region == "default"
     json = `aws --profile #{profile} ec2 describe-instances`
   else
@@ -57,6 +61,10 @@ def printRegion(profile,region)
         print "\t"
         print instance["InstanceType"]
         print "\t"
+        if keyname
+          print instance["KeyName"]
+        end
+        print "\t"
         if instance["Platform"]
           print instance["Platform"]
         else
@@ -75,19 +83,6 @@ def printRegion(profile,region)
   end
 end
 
-# All AWS Regions
-regions=[
-  "us-east-2",
-  "us-east-1",
-  "us-west-1",
-  "us-west-2",
-  "eu-central-1",
-  "eu-west-1",
-  "eu-west-2",
-  "eu-west-3",
-  "sa-east-1"
-]
-
 options = {
   :profile => "default",
   :region => nil,
@@ -101,6 +96,9 @@ parser = OptionParser.new do|opts|
   opts.on('-r', '--region region', 'Region. "all" will list all regions. Default region if not specified') do |region|
     options[:region] = region;
   end
+  opts.on('-k', '--keyname', 'List keyname to each EC2') do |keyname|
+    options[:keyname] = true;
+  end
   opts.on('-h', '--help', 'Help') do
     puts opts
     exit
@@ -111,14 +109,14 @@ parser.parse!
 
 # If no regions specified go for default 
 if options[:region].nil?
-  printRegion(options[:profile],"default")
+  printRegion(options[:profile],"default",options[:keyname])
 
   # List all regions
 elsif options[:region] == "all"
   regions.each do |region|
-    printRegion(options[:profile],region)
+    printRegion(options[:profile],region,options[:keyname])
   end
 else
   # If any region specified, list instances for that region only
-  printRegion(options[:profile],options[:region])
+  printRegion(options[:profile],options[:region],options[:keyname])
 end

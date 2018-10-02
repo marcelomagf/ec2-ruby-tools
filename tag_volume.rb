@@ -11,7 +11,7 @@ require 'optparse'
 
 # AWS Regions
 regionsfile = __dir__ + "/aws.regions.txt"
-regions = File.readlines(regionsfile)
+regions = File.readlines(regionsfile).map(&:chomp)
 
 # tagInstanceVolumes 
 def tagInstanceVolumes(profile,region,instanceid,lftag,tagvalue)

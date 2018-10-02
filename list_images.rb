@@ -10,7 +10,7 @@ require 'optparse'
 
 # AWS Regions
 regionsfile = __dir__ + "/aws.regions.txt"
-regions = File.readlines(regionsfile)
+regions = File.readlines(regionsfile).map(&:chomp)
 
 # Print spaces to tabulate nicely
 def printSpaces(name,space)

@@ -8,9 +8,9 @@ require 'rubygems'
 require 'json'
 require 'optparse'
 
+# AWS Regions
 regionsfile = __dir__ + "/aws.regions.txt"
-regions = File.readlines(regionsfile)
-
+regions = File.readlines(regionsfile).map(&:chomp)
 
 # Do something with instance
 def actionInstance(profile,region,action,instance)

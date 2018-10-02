@@ -16,7 +16,7 @@ def printLabel(label)
   puts  "-------------"
 end
 
-# Print emrs
+# Print EMR
 def printEMR(profile,region,lftag)
   json = `aws --profile #{profile} --region #{region} emr list-clusters --active`
   if json.length > 20
@@ -47,7 +47,7 @@ def printEMR(profile,region,lftag)
   end
 end
 
-# Print rdss
+# Print RDS
 def printRDS(profile,region,lftag)
   json = `aws --profile #{profile} --region #{region} rds describe-db-instances`
   if json.length > 20
@@ -78,7 +78,7 @@ def printRDS(profile,region,lftag)
   end
 end
 
-# Print lambdas
+# Print Lambda
 def printLambda(profile,region,lftag)
   json = `aws --profile #{profile} --region #{region} lambda list-functions`
   if json.length > 20
@@ -109,7 +109,7 @@ def printLambda(profile,region,lftag)
   end
 end
 
-# Print buckets
+# Print S3 Buckets
 def printBuckets(profile,region,lftag)
   json = `aws --profile #{profile} --region #{region} s3api list-buckets`
   if json.length > 20
@@ -165,6 +165,58 @@ def printCloudformation(profile,region,lftag)
   end
 end
 
+# Print Volumes
+def printVolumes(profile,region,lftag)
+  json = `aws --profile #{profile} --region #{region} ec2 describe-volumes`
+  if json.length > 20
+    parsed = JSON.parse(json)
+  end
+  # Gotta check if any servers at all
+  if json.length > 20
+    parsed["Volumes"].each do |volume|
+      name = volume["VolumeId"]
+      ok = false
+      if volume["Tags"]
+        volume["Tags"].each do |tag|
+          if tag["Key"] == lftag
+            project = tag["Value"]
+            ok = true
+          end
+        end
+      end
+      if !ok
+        puts "Volume sem tag: #{name} #{region}"
+      end
+    end
+  end
+end
+
+# Print Snapshots
+def printSnapshots(profile,region,lftag)
+  json = `aws --profile #{profile} --region #{region} ec2 describe-snapshots --owner-ids self`
+  if json.length > 20
+    parsed = JSON.parse(json)
+  end
+  # Gotta check if any servers at all
+  if json.length > 20
+    parsed["Snapshots"].each do |snapshot|
+      name = snapshot["SnapshotId"]
+      ok = false
+      if snapshot["Tags"]
+        snapshot["Tags"].each do |tag|
+          if tag["Key"] == lftag
+            project = tag["Value"]
+            ok = true
+          end
+        end
+      end
+      if !ok
+        puts "Snapshot sem tag: #{name} #{region}"
+      end
+    end
+  end
+end
+
 # Print Redshift
 def printRedshift(profile,region,lftag)
   json = `aws --profile #{profile} --region #{region} redshift describe-clusters`
@@ -191,7 +243,7 @@ def printRedshift(profile,region,lftag)
   end
 end
 
-# Print each server from all regions
+# Print EC2 Instances
 def printInstances(profile,region,lftag)
   json = `aws --profile #{profile} --region #{region} ec2 describe-instances`
   if json.length > 20
@@ -247,6 +299,8 @@ options = {
   :emr => false,
   :s3 => false,
   :redshift => false,
+  :lambda => false,
+  :cloudformation => false,
   :tag => "project",
   :profile => "default",
 }
@@ -256,7 +310,7 @@ parser = OptionParser.new do|opts|
   opts.on('-i', '--instance', 'List Instances') do |instance|
     options[:instance] = true;
   end
-  opts.on('-r', '--rds', 'List RDS') do |rds|
+  opts.on('-d', '--rds', 'List RDS') do |rds|
     options[:rds] = true;
   end
   opts.on('-e', '--emr', 'List EMR') do |emr|
@@ -277,6 +331,9 @@ parser = OptionParser.new do|opts|
   opts.on('-t', '--tag tag', 'What tag to look for') do |tag|
     options[:tag] = tag;
   end
+  opts.on('-r', '--region region', 'AWS Specific Region. Default: "default"') do |region|
+    options[:region] = region;
+  end
   opts.on('-p', '--profile profile', 'AWS CLI Profile. Default: "default"') do |profile|
     options[:profile] = profile;
   end
@@ -288,10 +345,18 @@ end
 
 parser.parse!
 
+if options[:region]
+  regions=[
+    "#{options[:region]}",
+  ]
+end
+
 if options[:instance]
   printLabel("Instances")
   regions.each do |region|
     printInstances(options[:profile],region,options[:tag])
+    printVolumes(options[:profile],region,options[:tag])
+    printSnapshots(options[:profile],region,options[:tag])
   end
 end
 

@@ -4,10 +4,12 @@
 # License Type: GNU GENERAL PUBLIC LICENSE, Version 3
 # Author: Marcelo Almeda <marcelomagf@gmail.com>
 
+# Requires
 require 'rubygems'
 require 'json'
 require 'optparse'
 
+#Print AWS Service Label
 def printLabel(label)
   puts  "-------------"
   puts  label
@@ -44,6 +46,7 @@ def printEMR(profile,region,lftag)
     end
   end
 end
+
 # Print rdss
 def printRDS(profile,region,lftag)
   json = `aws --profile #{profile} --region #{region} rds describe-db-instances`
@@ -136,6 +139,31 @@ def printBuckets(profile,region,lftag)
   end
 end
 
+# Print Cloudformation
+def printCloudformation(profile,region,lftag)
+  json = `aws --profile #{profile} --region #{region} cloudformation describe-stacks`
+  if json.length > 20
+    parsed = JSON.parse(json)
+  end
+  # Gotta check if any servers at all
+  if json.length > 20
+    parsed["Stacks"].each do |cloudformation|
+      name = cloudformation["StackName"]
+      ok = false
+      if cloudformation["Tags"]
+        cloudformation["Tags"].each do |tag|
+          if tag["Key"] == lftag
+            project = tag["Value"]
+            ok = true
+          end
+        end
+      end
+      if !ok
+        puts "Stack sem tag: #{name} #{region}"
+      end
+    end
+  end
+end
 
 # Print Redshift
 def printRedshift(profile,region,lftag)
@@ -243,6 +271,9 @@ parser = OptionParser.new do|opts|
   opts.on('-l', '--lambda', 'List Lambda Functions') do |lambda|
     options[:lambda] = true;
   end
+  opts.on('-f', '--cloudformation', 'List Cloudformation Stacks') do |cloudformation|
+    options[:cloudformation] = true;
+  end
   opts.on('-t', '--tag tag', 'What tag to look for') do |tag|
     options[:tag] = tag;
   end
@@ -282,6 +313,13 @@ if options[:redshift]
   printLabel("Redshift")
   regions.each do |region|
     printRedshift(options[:profile],region,options[:tag])
+  end
+end
+
+if options[:cloudformation]
+  printLabel("Cloudformation")
+  regions.each do |region|
+    printCloudformation(options[:profile],region,options[:tag])
   end
 end
 

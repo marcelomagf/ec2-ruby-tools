@@ -302,7 +302,7 @@ parser = OptionParser.new do|opts|
   opts.on('-e', '--emr', 'List EMR') do |emr|
     options[:emr] = true;
   end
-  opts.on('-d', '--redshift', 'List Redshift') do |redshift|
+  opts.on('-f', '--redshift', 'List Redshift') do |redshift|
     options[:redshift] = true;
   end
   opts.on('-s', '--s3', 'List S3 Buckets') do |s3|
@@ -311,7 +311,7 @@ parser = OptionParser.new do|opts|
   opts.on('-l', '--lambda', 'List Lambda Functions') do |lambda|
     options[:lambda] = true;
   end
-  opts.on('-f', '--cloudformation', 'List Cloudformation Stacks') do |cloudformation|
+  opts.on('-c', '--cloudformation', 'List Cloudformation Stacks') do |cloudformation|
     options[:cloudformation] = true;
   end
   opts.on('-t', '--tag tag', 'What tag to look for') do |tag|

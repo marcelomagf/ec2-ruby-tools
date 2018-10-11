@@ -98,16 +98,18 @@ def printLambda(profile,region,lftag)
       else
         puts "Lambda sem tag: #{lambdaname}"
       end
+      ok = false
       if jsonb.length > 20
-        ok = false
         parsedb["Tags"].each do |tag|
-          if tag == lftag
-            ok = true
+          tag.each do |t|
+            if t == lftag
+              ok = true
+            end
           end
         end
-        if !ok
-          puts "lambda sem tag: #{lambdaname}"
-        end
+      end
+      if !ok
+        puts "lambda sem tag: #{lambdaname}"
       end
     end
   end
